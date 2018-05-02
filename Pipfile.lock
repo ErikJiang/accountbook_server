@@ -1,7 +1,20 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "415dfdcb118dd9bdfef17671cb7dcd78dbd69b6ae7d4f39e8b44e71d60ca72e7"
+            "sha256": "72ddbcf9d5157ff87b737cd484b8e4b7561e248df3243365b0efe8c7073bbaa1"
+        },
+        "host-environment-markers": {
+            "implementation_name": "cpython",
+            "implementation_version": "3.6.2",
+            "os_name": "posix",
+            "platform_machine": "x86_64",
+            "platform_python_implementation": "CPython",
+            "platform_release": "17.2.0",
+            "platform_system": "Darwin",
+            "platform_version": "Darwin Kernel Version 17.2.0: Fri Sep 29 18:27:05 PDT 2017; root:xnu-4570.20.62~3/RELEASE_X86_64",
+            "python_full_version": "3.6.2",
+            "python_version": "3.6",
+            "sys_platform": "darwin"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -15,6 +28,23 @@
             }
         ]
     },
-    "default": {},
+    "default": {
+        "django": {
+            "hashes": [],
+            "version": "==2.0.5"
+        },
+        "djangorestframework": {
+            "hashes": [],
+            "version": "==3.7"
+        },
+        "mysqlclient": {
+            "hashes": [],
+            "version": "==1.3.12"
+        },
+        "pytz": {
+            "hashes": [],
+            "version": "==2018.4"
+        }
+    },
     "develop": {}
 }
