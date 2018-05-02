@@ -1,8 +1,8 @@
 from django.db import models
 
 # Create your models here.
-# 账目表
-class Bills(models.Model):
+# 分类表
+class Categorys(models.Model):
     OUTGO = '0'     # 账目类型.支出
     INCOME = '1'    # 账目类型.收入
     TYPE_CHOICE = (
@@ -10,15 +10,14 @@ class Bills(models.Model):
         (INCOME, 'INCOME'),
     )
 
-    user = models.TextField() # 账目用户ID ForeignKey()
+    user = models.TextField() # 用户ID ForeignKey()
+    is_default = model.BooleanField() # 是否为初始默认类型 True:默认存在分类 False:用户自定义分类
+    is_parent = model.BooleanField() # 是否为父类 True:父类 False:子类
     bill_type = models.CharField(max_length=1, choices=TYPE_CHOICE, default=OUTGO) # 账目类型
-    category = models.TextField() # 一级分类ID  
-    subcategory = models.TextField() # 二级分类ID
-    amount = models.DecimalField(max_digits=16, decimal_places=2, default=0) # 账目金额
-    record_date = models.DateField() # 记录时间
-    remarks = models.CharField(max_length=140) # 备注 至多140字
+    name = models.TextField() # 分类名称 
+    parent_id = models.TextField() # 父级ID
     modify_time = models.DateTimeField(auto_now=True) # 修改时间
     create_time = models.DateTimeField(auto_now_add=True) # 创建时间
 
     class Meta:
-        db_table = "bills"
+        db_table = "categorys"
