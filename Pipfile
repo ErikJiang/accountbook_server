@@ -1,21 +1,13 @@
 [[source]]
-
-url = "https://pypi.python.org/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[packages]
+django = "==2.0.5"
+mysqlclient = "*"
 
 [dev-packages]
 
-
-
-[packages]
-
-django = "*"
-mysqlclient = "*"
-djangorestframework = "*"
-
-
 [requires]
-
 python_version = "3.6"
