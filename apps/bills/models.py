@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from apps.category.models import Categorys
+from apps.categorys.models import Categorys
 
 # Create your models here.
 class Bills(models.Model):

@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'apps.bills',
+    'apps.categorys',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'accountbook',
         'USER': 'test',
-        'PASSWORD': 'jiangink',
+        'PASSWORD': '123456789',
         'HOST': '127.0.0.1'
     }
 }
