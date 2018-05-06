@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
 from apps.bills.views import BillsViewSet
 from apps.categorys.views import CategorysViewSet
 
@@ -23,7 +24,11 @@ router = routers.DefaultRouter()
 router.register(r'bills', BillsViewSet)
 router.register(r'categorys', CategorysViewSet)
 
+schema_view = get_swagger_view(title='Accountbook API')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
+    path('docs/', schema_view),
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls')),
 ]

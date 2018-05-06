@@ -3,8 +3,9 @@ from apps.bills.models import Bills
 from apps.bills.serializers import BillSerializer
 
 from rest_framework import viewsets
-# Create your views here.
+from rest_framework.permissions import IsAuthenticated
 
 class BillsViewSet(viewsets.ModelViewSet):
     queryset = Bills.objects.all()
     serializer_class = BillSerializer
+    permission_classes = (IsAuthenticated,)
