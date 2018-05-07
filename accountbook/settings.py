@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'rest_framework_swagger',
+    'api',
+    'apps.users',
     'apps.bills',
     'apps.categorys',
 ]
@@ -82,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'accountbook',
         'USER': 'test',
-        'PASSWORD': 'jiangink',
+        'PASSWORD': '123456789',
         'HOST': '127.0.0.1'
     }
 }
@@ -128,3 +132,6 @@ STATIC_URL = '/static/'
 
 LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
+
+# 自定义用户模型 custom user model
+AUTH_USER_MODEL = 'users.CustomUser'
