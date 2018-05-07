@@ -9,6 +9,7 @@ mysqlclient = "==1.3.12"
 djangorestframework = "==3.8.2"
 django-rest-swagger = "==2.2.0"
 django-rest-auth = "*"
+django-allauth = "*"
 
 [dev-packages]
 
