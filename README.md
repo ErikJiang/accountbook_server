@@ -2,7 +2,7 @@
 
 > account book server project
 
-## 安装运行步骤
+## 构建运行步骤
 
 ### 1. 创建虚拟环境并安装依赖
 ``` bash

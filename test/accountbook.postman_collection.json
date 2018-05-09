@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "4bb53e30-424d-409e-87d0-6b2f00903f04",
+		"name": "accountbook",
+		"description": "记账本",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "bills",
+			"description": "账目相关",
+			"item": [
+				{
+					"name": "http://127.0.0.1:8000/api/v1/bills/",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234qwer",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "jiangink",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/bills/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"bills",
+								""
+							]
+						},
+						"description": "获取账目列表"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/bills/",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234qwer",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "jiangink",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"category\": 1,\r\n  \"bill_type\": \"0\",\r\n  \"amount\": 20.5,\r\n  \"remarks\": \"测试\",\r\n  \"record_date\": \"2018-05-09\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/bills/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"bills",
+								""
+							]
+						},
+						"description": "新增账目"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/bills/{id}/",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234qwer",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "jiangink",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/bills/1/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"bills",
+								"1",
+								""
+							]
+						},
+						"description": "获取单条账目详情"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/bills/{id}/",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234qwer",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "jiangink",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"category\": 1,\r\n  \"bill_type\": \"0\",\r\n  \"amount\": 1050,\r\n  \"remarks\": \"修改测试宝\",\r\n  \"record_date\": \"2018-05-08\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/bills/5/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"bills",
+								"5",
+								""
+							]
+						},
+						"description": "修改单条账目信息"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/bills/{id}/",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234qwer",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "jiangink",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/bills/7/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"bills",
+								"7",
+								""
+							]
+						},
+						"description": "删除单条账目信息"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "categorys",
+			"description": "类别相关",
+			"item": []
+		},
+		{
+			"name": "rest-auth",
+			"description": "用户及认证相关",
+			"item": []
+		}
+	]
+}
