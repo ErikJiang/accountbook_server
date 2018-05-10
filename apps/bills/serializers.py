@@ -1,8 +1,10 @@
 from rest_framework import serializers
+from apps.categorys.fields import EnumField
 from apps.bills.models import Bills
-from apps.categorys.serializers import CategorySerializer
+from apps.categorys.serializers import BillType, CategorySerializer
 
 class BillSerializer(serializers.ModelSerializer):
+    bill_type = EnumField(enum=BillType)
     class Meta:
         model = Bills
         fields = ('id', 'user', 'category', 'bill_type', 'amount', 'remarks', 'record_date',)
