@@ -5,8 +5,9 @@ from apps.categorys.views import CategorysViewSet
 from apps.users.views import UsersViewSet
 
 router = routers.DefaultRouter()
-router.register(r'bills', BillsViewSet)
-router.register(r'categorys', CategorysViewSet)
+# 若存在自定义get_queryset方法的视图集，则该视图集在注册时需设置base_name
+router.register(r'bills', BillsViewSet, base_name='bills')
+router.register(r'categorys', CategorysViewSet, base_name='categorys')
 router.register(r'users', UsersViewSet)
 
 urlpatterns = [
