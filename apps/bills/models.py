@@ -24,3 +24,4 @@ class Bills(models.Model):
 
     class Meta:
         db_table = "bills"
+        ordering = ['-modify_time']

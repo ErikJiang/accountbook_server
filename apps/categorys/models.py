@@ -25,3 +25,4 @@ class Categorys(models.Model):
 
     class Meta:
         db_table = "categorys"
+        ordering = ['-modify_time']
