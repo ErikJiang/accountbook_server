@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "34bfb73f-ae5c-4704-a03a-c135fe2808ae",
+		"_postman_id": "5516c537-3bc2-4e60-92d4-f9287a8ed514",
 		"name": "accountbook",
 		"description": "记账本",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -82,7 +82,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"category\": 1,\r\n  \"bill_type\": \"0\",\r\n  \"amount\": 20.5,\r\n  \"remarks\": \"测试\",\r\n  \"record_date\": \"2018-05-09\"\r\n}"
+							"raw": "{\r\n  \"category\": 4,\r\n  \"bill_type\": \"INCOME\",\r\n  \"amount\": 500,\r\n  \"remarks\": \"公司钱红包活动\",\r\n  \"record_date\": \"2018-05-02\"\r\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/api/v1/bills/",
@@ -274,7 +274,10 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/api/v1/categorys/",
 							"protocol": "http",
@@ -323,7 +326,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"is_default\": false,\n  \"bill_type\": \"0\",\n  \"name\": \"晚餐\"\n}"
+							"raw": "{\n  \"is_default\": true,\n  \"bill_type\": \"INCOME\",\n  \"name\": \"奖金\"\n}"
 						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/api/v1/categorys/",
@@ -366,7 +369,10 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/api/v1/categorys/1/",
 							"protocol": "http",
@@ -460,7 +466,10 @@
 						},
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/api/v1/categorys/5/",
 							"protocol": "http",
