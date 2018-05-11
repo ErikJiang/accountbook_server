@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth.registration',
     'rest_framework_swagger',
+    'django_filters',
     'api',
     'apps.users',
     'apps.bills',
@@ -90,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'accountbook',
         'USER': 'test',
-        'PASSWORD': 'jiangink',
+        'PASSWORD': '123456789',
         'HOST': '127.0.0.1'
     }
 }

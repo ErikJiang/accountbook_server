@@ -5,9 +5,17 @@ from apps.bills.serializers import BillSerializer
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+# 过滤器
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from apps.bills.filters import BillsFilter
+
 class BillsViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
     permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = BillsFilter
+    ordering_fields = ('amount', 'record_date')
 
     # 覆写查询集，仅查询当前用户下的账目数据
     def get_queryset(self):
