@@ -4,14 +4,22 @@ from apps.bills.serializers import BillSerializer
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 
 # 过滤器
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from apps.bills.filters import BillsFilter
 
+# 分页设置
+class ResultsSetPagination(PageNumberPagination):
+    page_size = 2
+    page_size_query_param = 'page_size'
+    max_page_size = 10
+
 class BillsViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
+    pagination_class = ResultsSetPagination
     permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BillsFilter
