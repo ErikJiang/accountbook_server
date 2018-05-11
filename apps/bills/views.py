@@ -13,9 +13,9 @@ from apps.bills.filters import BillsFilter
 
 # 分页设置
 class ResultsSetPagination(PageNumberPagination):
-    page_size = 2
+    page_size = 10
     page_size_query_param = 'page_size'
-    max_page_size = 10
+    max_page_size = 100
 
 class BillsViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
