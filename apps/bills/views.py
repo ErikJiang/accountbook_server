@@ -11,6 +11,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from apps.bills.filters import BillsFilter
 
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+import logging
+logger = logging.getLogger(__name__)
+
 # 分页设置
 class ResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -36,3 +42,12 @@ class BillsViewSet(viewsets.ModelViewSet):
     # 更新时再次更新用户关联关系
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(methods=['post'], detail=False)
+    def batch(self, request):
+        # todo
+        data = request.data
+        id_set = data['test']
+        bills_data = Bills.objects.filter(pk__in=id_set)
+        serializer = self.get_serializer(bills_data, many=True)
+        return Response(serializer.data)
