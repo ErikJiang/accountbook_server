@@ -14,6 +14,8 @@ from apps.bills.filters import BillsFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from apps.bills.schemas import BillSchema
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,7 @@ class BillsViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = BillsFilter
     ordering_fields = ('amount', 'record_date')
+    schema = BillSchema()
 
     # 覆写查询集，仅查询当前用户下的账目数据
     def get_queryset(self):
