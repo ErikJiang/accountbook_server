@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from apps.bills.models import Bills
-from apps.bills.serializers import BillSerializer
+from apps.bills.serializers import BillSerializer, BatchDelSerializer
 
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
@@ -48,15 +48,23 @@ class BillsViewSet(viewsets.ModelViewSet):
 
     @action(methods=['patch'], detail=False)
     def batch_del(self, request):
+        """
+        batch delete bills
+        """
 
-        if 'bill_ids' not in self.request.data:
-            content = {'msg': 'request param bill_ids is not exist.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        serializer = BatchDelSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        bill_ids = serializer.data.get('bill_ids')
+
+        # if 'bill_ids' not in self.request.data:
+        #     content = {'msg': 'request param bill_ids is not exist.'}
+        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
         
-        bill_ids = self.request.data.get('bill_ids')
-        if not isinstance(bill_ids, list):
-            content = {'msg': 'request param bill_ids is invalid type.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        # bill_ids = self.request.data.get('bill_ids')
+        # if not isinstance(bill_ids, list):
+        #     content = {'msg': 'request param bill_ids is invalid type.'}
+        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
         
         bills_data = Bills.objects.filter(pk__in=bill_ids)
 

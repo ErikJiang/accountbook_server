@@ -16,3 +16,6 @@ class BillSerializer(serializers.ModelSerializer):
         category_data = CategorySerializer(instance.category).data
         representation['category'] = category_data['name']
         return representation
+
+class BatchDelSerializer(serializers.Serializer):
+    bill_ids = serializers.ListField(required=True, child=serializers.IntegerField())
