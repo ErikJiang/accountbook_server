@@ -2,7 +2,7 @@ from django.shortcuts import render
 from apps.bills.models import Bills
 from apps.bills.serializers import BillSerializer
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 
@@ -43,11 +43,22 @@ class BillsViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(methods=['post'], detail=False)
-    def batch(self, request):
-        # todo
-        data = request.data
-        id_set = data['test']
-        bills_data = Bills.objects.filter(pk__in=id_set)
+    @action(methods=['patch'], detail=False)
+    def batch_del(self, request):
+
+        if 'bill_ids' not in self.request.data:
+            content = {'msg': 'request param bill_ids is not exist.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        
+        bill_ids = self.request.data.get('bill_ids')
+        if not isinstance(bill_ids, list):
+            content = {'msg': 'request param bill_ids is invalid type.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        
+        bills_data = Bills.objects.filter(pk__in=bill_ids)
+
+        # todo update
+
         serializer = self.get_serializer(bills_data, many=True)
         return Response(serializer.data)
+        
