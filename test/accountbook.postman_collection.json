@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5516c537-3bc2-4e60-92d4-f9287a8ed514",
+		"_postman_id": "82ca52a7-216d-47f2-8e7c-67d4483a1c04",
 		"name": "accountbook",
 		"description": "记账本",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -13,23 +13,13 @@
 				{
 					"name": "http://127.0.0.1:8000/api/v1/bills/",
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "1234qwer",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "jiangink",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token c8aaa13bb84ebfba6ed9a2a7301188b6a7fe89cd"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
@@ -245,6 +235,57 @@
 							]
 						},
 						"description": "删除单条账目信息"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/bills/batch/",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "laowang",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "1234qwer",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bill_ids\": [5,7]\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/bills/batch/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"bills",
+								"batch",
+								""
+							]
+						},
+						"description": "批量删除"
 					},
 					"response": []
 				}
@@ -531,6 +572,153 @@
 							]
 						},
 						"description": "登录"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/rest-auth/logout/",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token c8aaa13bb84ebfba6ed9a2a7301188b6a7fe89cd"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/rest-auth/logout/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"rest-auth",
+								"logout",
+								""
+							]
+						},
+						"description": "注销"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/rest-auth/user/",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token cab538d874c7e598a4bc507a24d4a114317991ba"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/rest-auth/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"rest-auth",
+								"user",
+								""
+							]
+						},
+						"description": "用户详情"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/rest-auth/user/",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token cab538d874c7e598a4bc507a24d4a114317991ba"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"jiangink\",\r\n  \"first_name\": \"jiang\",\r\n  \"last_name\": \"ink\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/rest-auth/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"rest-auth",
+								"user",
+								""
+							]
+						},
+						"description": "修改用户信息"
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:8000/api/v1/rest-auth/password/change/",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token cab538d874c7e598a4bc507a24d4a114317991ba"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"new_password1\": \"4321rewq\",\r\n  \"new_password2\": \"4321rewq\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/rest-auth/password/change/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"rest-auth",
+								"password",
+								"change",
+								""
+							]
+						},
+						"description": "修改用户密码"
 					},
 					"response": []
 				}
