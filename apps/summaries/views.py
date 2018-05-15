@@ -6,6 +6,11 @@ from coreapi import Field, Link, document
 import coreschema
 
 from apps.summaries.serializers import SummariesSerializer
+from apps.bills.serializers import BillSerializer
+from apps.bills.models import Bills
+
+import logging
+logger = logging.getLogger(__name__)
 
 # request: {
 #    date: 'YYYY or YYYY-MM'
@@ -82,15 +87,35 @@ class CustomAutoSchema(AutoSchema):
 class SummariesViewSet(viewsets.GenericViewSet):
     schema = CustomAutoSchema()
 
+    def get_queryset(self):
+        serializer = SummariesSerializer(data=self.request.query_params)
+        serializer.is_valid(raise_exception=True)
+        time_type = self.request.query_params.get('time_type')
+        time_value = self.request.query_params.get('time_value')
+        # todo debug
+        if time_type == 'YEAR':
+            q = Bills.objects.filter(
+                record_date__year=time_value, 
+                # user=self.request.user
+                )
+        if time_type == 'MONTH':
+            time_value = time_value.split('-', 1)
+            q = Bills.objects.filter(
+                record_date__year=time_value[0],
+                record_date__month=time_value[1],
+                # user=self.request.user
+                )
+        logger.error(q.query)
+
     @action(methods=['GET'], detail=False)
     def info(self, request):
         """
         概要信息
         """
-        serializer = SummariesSerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
+        q = self.get_queryset()
+        bill_serializer = BillSerializer(q, many=True)
         # todo
-        return Response(status=status.HTTP_200_OK)
+        return Response(data=bill_serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=False)
     def linechart(self, request):
