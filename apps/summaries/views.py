@@ -3,14 +3,11 @@ from rest_framework.schemas import AutoSchema
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from coreapi import Field, Link, document
+from django.db.models import Sum
 import coreschema
-
 from apps.summaries.serializers import SummariesSerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
-
-import logging
-logger = logging.getLogger(__name__)
 
 # request: {
 #    date: 'YYYY or YYYY-MM'
@@ -60,7 +57,6 @@ logger = logging.getLogger(__name__)
 class CustomAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         link = super().get_link(path, method, base_url)
-
         fields = [
             Field(
                 'time_type',
@@ -92,30 +88,33 @@ class SummariesViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         time_type = self.request.query_params.get('time_type')
         time_value = self.request.query_params.get('time_value')
-        # todo debug
         if time_type == 'YEAR':
-            q = Bills.objects.filter(
-                record_date__year=time_value, 
-                # user=self.request.user
-                )
+            return Bills.objects.filter(
+                record_date__year=time_value, user=self.request.user)
         if time_type == 'MONTH':
             time_value = time_value.split('-', 1)
-            q = Bills.objects.filter(
+            return Bills.objects.filter(
                 record_date__year=time_value[0],
                 record_date__month=time_value[1],
-                # user=self.request.user
-                )
-        logger.error(q.query)
+                user=self.request.user)
 
     @action(methods=['GET'], detail=False)
     def info(self, request):
         """
         概要信息
         """
-        q = self.get_queryset()
-        bill_serializer = BillSerializer(q, many=True)
+        query = self.get_queryset()
+
+        result = query.values('bill_type').annotate(amount_sum=Sum('amount'))
+        print(result)
         # todo
-        return Response(data=bill_serializer.data, status=status.HTTP_200_OK)
+        res_dict = {
+            "time": request.query_params.get('time_value'),
+            "income_amount": '收入金额',
+            "outgo_amount": '支出金额',
+            "balance_amount": '结余金额'
+        }
+        return Response(data=res_dict, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=False)
     def linechart(self, request):
