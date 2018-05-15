@@ -16,7 +16,7 @@ class BillSchema(AutoSchema):
       )
     ]
     fields = link.fields
-    if link.url == '/api/v1/bills/batch_del/':
+    if link.url == '/api/v1/bills/batch/' and method.lower() == 'delete':
       fields = tuple(batch_del_fields)
     
     link = Link(url=link.url, action=link.action, encoding=link.encoding, fields=fields, description=link.description)

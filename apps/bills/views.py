@@ -46,30 +46,16 @@ class BillsViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(methods=['patch'], detail=False)
-    def batch_del(self, request):
+    # 批量删除
+    @action(methods=['delete'], detail=False)
+    def batch(self, request):
         """
         batch delete bills
         """
-
         serializer = BatchDelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         bill_ids = serializer.data.get('bill_ids')
-
-        # if 'bill_ids' not in self.request.data:
-        #     content = {'msg': 'request param bill_ids is not exist.'}
-        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        
-        # bill_ids = self.request.data.get('bill_ids')
-        # if not isinstance(bill_ids, list):
-        #     content = {'msg': 'request param bill_ids is invalid type.'}
-        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        
         bills_data = Bills.objects.filter(pk__in=bill_ids)
-
-        # todo update
-
-        serializer = self.get_serializer(bills_data, many=True)
-        return Response(serializer.data)
+        bills_data.delete()
+        return Response(status.HTTP_204_NO_CONTENT)
         
