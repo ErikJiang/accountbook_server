@@ -57,5 +57,5 @@ class BillsViewSet(viewsets.ModelViewSet):
         bill_ids = serializer.data.get('bill_ids')
         bills_data = Bills.objects.filter(pk__in=bill_ids)
         bills_data.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
         
