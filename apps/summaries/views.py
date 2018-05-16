@@ -105,8 +105,14 @@ class SummariesViewSet(viewsets.GenericViewSet):
         """
         query = self.get_queryset()
 
-        result = query.values('bill_type').annotate(amount_sum=Sum('amount'))
+        result = query.values('bill_type').annotate(amount_sum=Sum('amount')).order_by()
+        print(result.query)
         print(result)
+
+        income_amount = result.get(bill_type=1)['amount_sum']
+        # outgo_amount = result.get(bill_type=0)
+        print(income_amount)
+        # print(outgo_amount)
         # todo
         res_dict = {
             "time": request.query_params.get('time_value'),
