@@ -28,3 +28,6 @@ $ python manage.py migrate
 ``` bash
 $ python manage.py runserver
 ```
+
+---
+* 详见: [`wiki`](https://github.com/JiangInk/accountbook_server/wiki)
