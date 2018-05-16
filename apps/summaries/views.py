@@ -9,51 +9,6 @@ from apps.summaries.serializers import SummariesSerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
 
-# request: {
-#    date: 'YYYY or YYYY-MM'
-# }
-
-# 概要信息
-# response: {
-#    date: 'YYYY or YYYY-MM',
-#    income_amount: '收入金额',
-#    outgo_amount: '支出金额',
-#    balance_amount: '结余金额'
-# }
-
-# 折线信息
-# response: {
-#    income_data: [
-#        {
-#           date: 'YYYY-MM or YYYY-MM-DD',
-#           amount: '金额'
-#        }
-#    ],
-#    outgo_data: [
-#        {
-#           date: 'YYYY-MM or YYYY-MM-DD',
-#           amount: '金额'
-#        }
-#     ]
-# }
-
-# 环状信息
-# response: {
-#    income_data: [
-#        {
-#           category: '类别',
-#           amount: '金额'
-#        }
-#    ],
-#    outgo_data: [
-#        {
-#           category: '类别',
-#           amount: '金额'
-#        }
-#     ]
-# }
-
-
 class CustomAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         link = super().get_link(path, method, base_url)
@@ -102,6 +57,24 @@ class SummariesViewSet(viewsets.GenericViewSet):
     def info(self, request):
         """
         概要信息
+        
+        ---
+        
+        ## request:
+
+        |参数名|描述|请求类型|参数类型|备注|
+        |:----:|:----:|:----:|:----:|:----:|
+        | time_type | 时间类型 | query | string | `YEAR` or `MONTH` |  
+        | time_value | 时间值 | query | string |  `YYYY` or `YYYY-MM`|
+            
+        ## response:
+        ``` json
+        {
+            "time": "统计时间",
+            "income_amount": "收入数额",
+            "outgo_amount": "支出数额",
+            "balance_amount": "结余数额"
+        }
         """
         query = self.get_queryset()
 
@@ -109,16 +82,20 @@ class SummariesViewSet(viewsets.GenericViewSet):
         print(result.query)
         print(result)
 
-        income_amount = result.get(bill_type=1)['amount_sum']
-        # outgo_amount = result.get(bill_type=0)
-        print(income_amount)
-        # print(outgo_amount)
-        # todo
+        try:
+            income_amount = result.get(bill_type=1)['amount_sum']
+        except Bills.DoesNotExist:
+            income_amount = 0
+        try:
+            outgo_amount = result.get(bill_type=0)['amount_sum']
+        except Bills.DoesNotExist:
+            outgo_amount = 0
+
         res_dict = {
             "time": request.query_params.get('time_value'),
-            "income_amount": '收入金额',
-            "outgo_amount": '支出金额',
-            "balance_amount": '结余金额'
+            "income_amount": income_amount,
+            "outgo_amount": outgo_amount,
+            "balance_amount": income_amount - outgo_amount
         }
         return Response(data=res_dict, status=status.HTTP_200_OK)
 
@@ -126,6 +103,32 @@ class SummariesViewSet(viewsets.GenericViewSet):
     def linechart(self, request):
         """
         折线图
+
+        ---
+        
+        ## request:
+
+        |参数名|描述|请求类型|参数类型|备注|
+        |:----:|:----:|:----:|:----:|:----:|
+        | time_type | 时间类型 | query | string | `YEAR` or `MONTH` |  
+        | time_value | 时间值 | query | string |  `YYYY` or `YYYY-MM`|
+            
+        ## response:
+        ``` json
+        {
+            "income_data": [
+                {
+                    "date": "YYYY-MM or YYYY-MM-DD",
+                    "amount": "金额"
+                }
+            ],
+            "outgo_data": [
+                {
+                    "date": "YYYY-MM or YYYY-MM-DD",
+                    "amount": "金额"
+                }
+            ]
+        }
         """
         serializer = SummariesSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -136,6 +139,32 @@ class SummariesViewSet(viewsets.GenericViewSet):
     def ringchart(self, request):
         """
         环状图
+
+        ---
+        
+        ## request:
+
+        |参数名|描述|请求类型|参数类型|备注|
+        |:----:|:----:|:----:|:----:|:----:|
+        | time_type | 时间类型 | query | string | `YEAR` or `MONTH` |  
+        | time_value | 时间值 | query | string |  `YYYY` or `YYYY-MM`|
+            
+        ## response:
+        ``` json
+        {
+            "income_data": [
+                {
+                    "category": "类别",
+                    "amount": "金额"
+                }
+            ],
+            "outgo_data": [
+                {
+                    "category": "类别",
+                    "amount": "金额"
+                }
+            ]
+        }
         """
         serializer = SummariesSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
