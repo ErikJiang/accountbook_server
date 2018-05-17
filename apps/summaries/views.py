@@ -9,6 +9,7 @@ from apps.summaries.serializers import SummariesSerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
 
+
 class CustomAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         link = super().get_link(path, method, base_url)
@@ -78,7 +79,8 @@ class SummariesViewSet(viewsets.GenericViewSet):
         """
         query = self.get_queryset()
 
-        result = query.values('bill_type').annotate(amount_sum=Sum('amount')).order_by()
+        result = query.values('bill_type').annotate(
+            amount_sum=Sum('amount')).order_by()
         print(result.query)
         print(result)
 
@@ -130,9 +132,25 @@ class SummariesViewSet(viewsets.GenericViewSet):
             ]
         }
         """
-        serializer = SummariesSerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        # todo
+        time_type = self.request.query_params.get('time_type')
+        queryset = self.get_queryset()
+
+        if time_type == 'YEAR':
+            # todo bill_type(income or outgo)
+            year_stat = queryset.extra({
+                'month': 'MONTH(record_date)'
+            }).values('month').annotate(total_amount=Sum('amount')).order_by()
+            print(year_stat.query)
+            print(year_stat)
+
+        if time_type == 'MONTH':
+            # todo bill_type(income or outgo)
+            month_stat = queryset.extra({
+                'day': 'DAY(record_date)'
+            }).values('day').annotate(total_amount=Sum('amount')).order_by()
+            print(month_stat.query)
+            print(month_stat)
+        
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=False)
@@ -166,7 +184,12 @@ class SummariesViewSet(viewsets.GenericViewSet):
             ]
         }
         """
-        serializer = SummariesSerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
+        queryset = self.get_queryset()
+
+        category_stat = queryset.values('category').annotate(
+            amount_sum=Sum('amount')).order_by()
+        print(category_stat.query)
+        print(category_stat)
+
         # todo
         return Response(status=status.HTTP_200_OK)
