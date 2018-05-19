@@ -138,16 +138,16 @@ class SummariesViewSet(viewsets.GenericViewSet):
         if time_type == 'YEAR':
             # todo bill_type(income or outgo)
             year_stat = queryset.extra({
-                'month': 'MONTH(record_date)'
-            }).values('month').annotate(total_amount=Sum('amount')).order_by()
+                'time': "DATE_FORMAT(record_date,'%%Y-%%m')"
+            }).values('time').annotate(total_amount=Sum('amount')).order_by()
             print(year_stat.query)
             print(year_stat)
 
         if time_type == 'MONTH':
             # todo bill_type(income or outgo)
             month_stat = queryset.extra({
-                'day': 'DAY(record_date)'
-            }).values('day').annotate(total_amount=Sum('amount')).order_by()
+                'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
+            }).values('time').annotate(total_amount=Sum('amount')).order_by()
             print(month_stat.query)
             print(month_stat)
         
