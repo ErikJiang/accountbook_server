@@ -193,3 +193,48 @@ class SummariesViewSet(viewsets.GenericViewSet):
 
         # todo
         return Response(status=status.HTTP_200_OK)
+
+    def init_timeset(time_type, time_value, time_stat):
+        # get time_stat latest item
+        # for in init data
+        
+        # time_type = 'YEAR'
+        # time_value = '2017'
+        # init_data = [
+        #     { time: '2017-01', amount: 0 },
+        #     { time: '2017-02', amount: 0 },
+        #     { time: '2017-03', amount: 0 },
+        #     { time: '2017-04', amount: 0 },
+        # ]
+        # stat_data = [
+        #     { time: '2017-03', amount: 500 },
+        #     { time: '2017-04', amount: 300 },
+        # ]
+        # result_data = [
+        #     { time: '2017-01', amount: 0 },
+        #     { time: '2017-02', amount: 0 },
+        #     { time: '2017-03', amount: 500 },
+        #     { time: '2017-04', amount: 300 },
+        # ]
+
+
+
+        # time_type = 'MONTH'
+        # time_value = '2017-05'
+        # init_data = [
+        #     { time: '2017-05-01', amount: 0 },
+        #     { time: '2017-05-01', amount: 0 },
+        #     { time: '2017-05-01', amount: 0 },
+        #     { time: '2017-05-01', amount: 0 },
+        #     { time: '2017-05-01', amount: 0 },
+            
+        # ]
+        # stat_data = [
+        #     { time: '2017-03', amount: 500 },
+        # ]
+        # result_data = [
+        #     { time: '2017-01', amount: 0 },
+        #     { time: '2017-02', amount: 0 },
+        #     { time: '2017-03', amount: 500 },
+        #     { time: '2017-04', amount: 0 },
+        # ]
