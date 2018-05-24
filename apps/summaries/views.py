@@ -8,6 +8,77 @@ import coreschema
 from apps.summaries.serializers import SummariesSerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
+from string import Template
+
+
+def init_timeset(time_type, time_value, time_stat):
+    # get time_stat latest item
+    # for in init data
+
+    # time_type = 'YEAR'
+    # time_value = '2017'
+    # init_data = [
+    #     { time: '2017-01', amount: 0 },
+    #     { time: '2017-02', amount: 0 },
+    #     { time: '2017-03', amount: 0 },
+    #     { time: '2017-04', amount: 0 },
+    # ]
+    # stat_data = [
+    #     { time: '2017-03', amount: 500 },
+    #     { time: '2017-04', amount: 300 },
+    # ]
+    # result_data = [
+    #     { time: '2017-01', amount: 0 },
+    #     { time: '2017-02', amount: 0 },
+    #     { time: '2017-03', amount: 500 },
+    #     { time: '2017-04', amount: 300 },
+    # ]
+    t_time = Template('$year-$month')
+    init_month_data = []
+    for month in range(1, 13):
+        init_month_data.append({
+            "time":
+            t_time.substitute(
+                year="2017",
+                month='0' + str(month) if month < 10 else str(month)),
+            "amount":
+            0
+        })
+    print(init_month_data)
+
+    stat_data = [
+        {
+            "time": '2017-03',
+            "amount": 500
+        },
+        {
+            "time": '2017-04',
+            "amount": 300
+        },
+    ]
+    time_list = [item['time'] for item in stat_data]
+    print(time_list)
+    print(max(time_list))
+
+    # time_type = 'MONTH'
+    # time_value = '2017-05'
+    # init_data = [
+    #     { time: '2017-05-01', amount: 0 },
+    #     { time: '2017-05-01', amount: 0 },
+    #     { time: '2017-05-01', amount: 0 },
+    #     { time: '2017-05-01', amount: 0 },
+    #     { time: '2017-05-01', amount: 0 },
+
+    # ]
+    # stat_data = [
+    #     { time: '2017-03', amount: 500 },
+    # ]
+    # result_data = [
+    #     { time: '2017-01', amount: 0 },
+    #     { time: '2017-02', amount: 0 },
+    #     { time: '2017-03', amount: 500 },
+    #     { time: '2017-04', amount: 0 },
+    # ]
 
 
 class CustomAutoSchema(AutoSchema):
@@ -138,7 +209,8 @@ class SummariesViewSet(viewsets.GenericViewSet):
         if time_type == 'YEAR':
             # todo bill_type(income or outgo)
             year_stat = queryset.extra({
-                'time': "DATE_FORMAT(record_date,'%%Y-%%m')"
+                'time':
+                "DATE_FORMAT(record_date,'%%Y-%%m')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
             print(year_stat.query)
             print(year_stat)
@@ -146,11 +218,14 @@ class SummariesViewSet(viewsets.GenericViewSet):
         if time_type == 'MONTH':
             # todo bill_type(income or outgo)
             month_stat = queryset.extra({
-                'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
+                'time':
+                "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
             print(month_stat.query)
             print(month_stat)
-        
+
+        init_timeset('YEAR', '2017', [])
+
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=False)
@@ -193,48 +268,3 @@ class SummariesViewSet(viewsets.GenericViewSet):
 
         # todo
         return Response(status=status.HTTP_200_OK)
-
-    def init_timeset(time_type, time_value, time_stat):
-        # get time_stat latest item
-        # for in init data
-        
-        # time_type = 'YEAR'
-        # time_value = '2017'
-        # init_data = [
-        #     { time: '2017-01', amount: 0 },
-        #     { time: '2017-02', amount: 0 },
-        #     { time: '2017-03', amount: 0 },
-        #     { time: '2017-04', amount: 0 },
-        # ]
-        # stat_data = [
-        #     { time: '2017-03', amount: 500 },
-        #     { time: '2017-04', amount: 300 },
-        # ]
-        # result_data = [
-        #     { time: '2017-01', amount: 0 },
-        #     { time: '2017-02', amount: 0 },
-        #     { time: '2017-03', amount: 500 },
-        #     { time: '2017-04', amount: 300 },
-        # ]
-
-
-
-        # time_type = 'MONTH'
-        # time_value = '2017-05'
-        # init_data = [
-        #     { time: '2017-05-01', amount: 0 },
-        #     { time: '2017-05-01', amount: 0 },
-        #     { time: '2017-05-01', amount: 0 },
-        #     { time: '2017-05-01', amount: 0 },
-        #     { time: '2017-05-01', amount: 0 },
-            
-        # ]
-        # stat_data = [
-        #     { time: '2017-03', amount: 500 },
-        # ]
-        # result_data = [
-        #     { time: '2017-01', amount: 0 },
-        #     { time: '2017-02', amount: 0 },
-        #     { time: '2017-03', amount: 500 },
-        #     { time: '2017-04', amount: 0 },
-        # ]
