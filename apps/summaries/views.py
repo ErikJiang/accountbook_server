@@ -9,77 +9,29 @@ from apps.summaries.serializers import SummariesSerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
 from string import Template
+from datetime import datetime
 
 
-def init_timeset(time_type, time_value, time_stat):
-    # get time_stat latest item
-    # for in init data
+def init_timeset(time_type, time_stat):
 
-    # time_type = 'YEAR'
-    # time_value = '2017'
-    # init_data = [
-    #     { time: '2017-01', amount: 0 },
-    #     { time: '2017-02', amount: 0 },
-    #     { time: '2017-03', amount: 0 },
-    #     { time: '2017-04', amount: 0 },
-    # ]
-    # stat_data = [
-    #     { time: '2017-03', amount: 500 },
-    #     { time: '2017-04', amount: 300 },
-    # ]
-    # result_data = [
-    #     { time: '2017-01', amount: 0 },
-    #     { time: '2017-02', amount: 0 },
-    #     { time: '2017-03', amount: 500 },
-    #     { time: '2017-04', amount: 300 },
-    # ]
-    t_time = Template('$year-$month')
-    init_month_data = []
-    for month in range(1, 13):
-        init_month_data.append({
-            "time":
-            t_time.substitute(
-                year="2017",
-                month='0' + str(month) if month < 10 else str(month)),
-            "amount":
-            0
-        })
-    print(init_month_data)
+    time_list = [item['time'] for item in time_stat]
+    max_time = max(time_list)
+    time_format = '%Y-%m' if time_type == 'YEAR' else '%Y-%m-%d'
+    dt = datetime.strptime(max_time, time_format)
+    upper_limit = dt.month if time_type == 'YEAR' else dt.day
+    def init_item(item):
+        day = 1 if time_type == 'YEAR' else item
+        month = item if time_type == 'YEAR' else dt.month
+        year = dt.year
+        return {
+            "time": datetime(day=day, month=month, year=year).strftime(time_format),
+            "amount": 0
+        }
 
-    stat_data = [
-        {
-            "time": '2017-03',
-            "amount": 500
-        },
-        {
-            "time": '2017-04',
-            "amount": 300
-        },
-    ]
-    time_list = [item['time'] for item in stat_data]
-    print(time_list)
-    print(max(time_list))
-
-    # time_type = 'MONTH'
-    # time_value = '2017-05'
-    # init_data = [
-    #     { time: '2017-05-01', amount: 0 },
-    #     { time: '2017-05-01', amount: 0 },
-    #     { time: '2017-05-01', amount: 0 },
-    #     { time: '2017-05-01', amount: 0 },
-    #     { time: '2017-05-01', amount: 0 },
-
-    # ]
-    # stat_data = [
-    #     { time: '2017-03', amount: 500 },
-    # ]
-    # result_data = [
-    #     { time: '2017-01', amount: 0 },
-    #     { time: '2017-02', amount: 0 },
-    #     { time: '2017-03', amount: 500 },
-    #     { time: '2017-04', amount: 0 },
-    # ]
-
+    init_data = map(init_item, range(1, upper_limit + 1))
+    print(list(init_data))
+    # todo merge init_data & time_stat
+    
 
 class CustomAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
@@ -224,7 +176,45 @@ class SummariesViewSet(viewsets.GenericViewSet):
             print(month_stat.query)
             print(month_stat)
 
-        init_timeset('YEAR', '2017', [])
+        year_stat = [
+            {
+                "time": "2017-02",
+                "amount": 1500
+            },
+            {
+                "time": "2017-03",
+                "amount": 2000
+            },
+            {
+                "time": "2017-05",
+                "amount": 2500
+            },
+            {
+                "time": "2017-07",
+                "amount": 1500
+            },
+        ]
+        init_timeset('YEAR', year_stat)
+
+        month_stat = [
+            {
+                "time": "2018-04-02",
+                "amount": 500
+            },
+            {
+                "time": "2018-04-05",
+                "amount": 550
+            },
+            {
+                "time": "2018-04-07",
+                "amount": 700
+            },
+            {
+                "time": "2018-04-11",
+                "amount": 630
+            },
+        ]
+        init_timeset('MONTH', month_stat)
 
         return Response(status=status.HTTP_200_OK)
 
