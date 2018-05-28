@@ -15,6 +15,8 @@ from datetime import datetime
 def init_timeset(time_type, time_stat):
 
     time_list = [item['time'] for item in time_stat]
+    if not time_list:
+        return []
     max_time = max(time_list)
     time_format = '%Y-%m' if time_type == 'YEAR' else '%Y-%m-%d'
     dt = datetime.strptime(max_time, time_format)
@@ -166,25 +168,36 @@ class SummariesViewSet(viewsets.GenericViewSet):
 
         if time_type == 'YEAR':
             # todo bill_type(income or outgo)
-            stat_data = queryset.extra({
-                'time':
-                "DATE_FORMAT(record_date,'%%Y-%%m')"
+            stat_income = queryset.filter(bill_type=1).extra({
+                'time': "DATE_FORMAT(record_date,'%%Y-%%m')"
+            }).values('time').annotate(total_amount=Sum('amount')).order_by()
+            stat_outgo = queryset.filter(bill_type=0).extra({
+                'time': "DATE_FORMAT(record_date,'%%Y-%%m')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
 
         if time_type == 'MONTH':
             # todo bill_type(income or outgo)
-            stat_data = queryset.extra({
-                'time':
-                "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
+            stat_income = queryset.filter(bill_type=1).extra({
+                'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
+            }).values('time').annotate(total_amount=Sum('amount')).order_by()
+            stat_outgo= queryset.filter(bill_type=0).extra({
+                'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
 
-        print(stat_data.query)
-        print(stat_data)
-        stat_data = list(stat_data)
-        if not stat_data:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        data = init_timeset(time_type, stat_data)
-        return Response(status=status.HTTP_200_OK, data=data)
+        # print(stat_income.query)
+        # print(stat_income)
+        # print(stat_outgo.query)
+        # print(stat_outgo)
+        stat_income = list(stat_income)
+        stat_outgo = list(stat_outgo)
+        
+        income_data = init_timeset(time_type, stat_income)
+        outgo_data = init_timeset(time_type, stat_outgo)
+        result = {
+            "income": income_data,
+            "outgo": outgo_data
+        }
+        return Response(status=status.HTTP_200_OK, data=result)
 
     @action(methods=['GET'], detail=False)
     def ringchart(self, request):
