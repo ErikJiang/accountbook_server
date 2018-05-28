@@ -25,12 +25,18 @@ def init_timeset(time_type, time_stat):
         year = dt.year
         return {
             "time": datetime(day=day, month=month, year=year).strftime(time_format),
-            "amount": 0
+            "total_amount": 0
         }
 
     init_data = map(init_item, range(1, upper_limit + 1))
-    print(list(init_data))
-    # todo merge init_data & time_stat
+    init_data = list(init_data)
+    # merge init_data & time_stat
+    for init_item in list(init_data):
+        for stat_item in time_stat:
+            if init_item['time'] == stat_item['time']:
+                init_item['total_amount'] = stat_item['total_amount']
+
+    return init_data
     
 
 class CustomAutoSchema(AutoSchema):
@@ -160,63 +166,25 @@ class SummariesViewSet(viewsets.GenericViewSet):
 
         if time_type == 'YEAR':
             # todo bill_type(income or outgo)
-            year_stat = queryset.extra({
+            stat_data = queryset.extra({
                 'time':
                 "DATE_FORMAT(record_date,'%%Y-%%m')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
-            print(year_stat.query)
-            print(year_stat)
 
         if time_type == 'MONTH':
             # todo bill_type(income or outgo)
-            month_stat = queryset.extra({
+            stat_data = queryset.extra({
                 'time':
                 "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
-            print(month_stat.query)
-            print(month_stat)
 
-        year_stat = [
-            {
-                "time": "2017-02",
-                "amount": 1500
-            },
-            {
-                "time": "2017-03",
-                "amount": 2000
-            },
-            {
-                "time": "2017-05",
-                "amount": 2500
-            },
-            {
-                "time": "2017-07",
-                "amount": 1500
-            },
-        ]
-        init_timeset('YEAR', year_stat)
-
-        month_stat = [
-            {
-                "time": "2018-04-02",
-                "amount": 500
-            },
-            {
-                "time": "2018-04-05",
-                "amount": 550
-            },
-            {
-                "time": "2018-04-07",
-                "amount": 700
-            },
-            {
-                "time": "2018-04-11",
-                "amount": 630
-            },
-        ]
-        init_timeset('MONTH', month_stat)
-
-        return Response(status=status.HTTP_200_OK)
+        print(stat_data.query)
+        print(stat_data)
+        stat_data = list(stat_data)
+        if not stat_data:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        data = init_timeset(time_type, stat_data)
+        return Response(status=status.HTTP_200_OK, data=data)
 
     @action(methods=['GET'], detail=False)
     def ringchart(self, request):
