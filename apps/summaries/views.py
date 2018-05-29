@@ -6,13 +6,14 @@ from coreapi import Field, Link, document
 from django.db.models import Sum
 import coreschema
 from apps.summaries.serializers import SummariesSerializer
+from apps.categorys.serializers import CategorySerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
 from string import Template
 from datetime import datetime
 
 
-def init_timeset(time_type, time_stat):
+def linechart_handle(time_type, time_stat):
 
     time_list = [item['time'] for item in time_stat]
     if not time_list:
@@ -39,7 +40,17 @@ def init_timeset(time_type, time_stat):
                 init_item['total_amount'] = stat_item['total_amount']
 
     return init_data
+
+def ringchart_handle(user, data):
     
+    # todo
+    # 根据data获取到类别ID列表
+    # 使用 user 查出对应的类别映射对象
+    # 将 data 中类别ID替换成类别名称
+    # 计算类别金额总和
+    # 对 data 每一项计算百分比
+    return []
+
 
 class CustomAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
@@ -149,16 +160,16 @@ class SummariesViewSet(viewsets.GenericViewSet):
         ## response:
         ``` json
         {
-            "income_data": [
+            "income": [
                 {
-                    "date": "YYYY-MM or YYYY-MM-DD",
-                    "amount": "金额"
+                    "time": "YYYY-MM or YYYY-MM-DD",
+                    "total_amount": "金额"
                 }
             ],
-            "outgo_data": [
+            "outgo": [
                 {
-                    "date": "YYYY-MM or YYYY-MM-DD",
-                    "amount": "金额"
+                    "time": "YYYY-MM or YYYY-MM-DD",
+                    "total_amount": "金额"
                 }
             ]
         }
@@ -167,7 +178,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
         queryset = self.get_queryset()
 
         if time_type == 'YEAR':
-            # todo bill_type(income or outgo)
             stat_income = queryset.filter(bill_type=1).extra({
                 'time': "DATE_FORMAT(record_date,'%%Y-%%m')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
@@ -176,7 +186,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
 
         if time_type == 'MONTH':
-            # todo bill_type(income or outgo)
             stat_income = queryset.filter(bill_type=1).extra({
                 'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
@@ -191,8 +200,8 @@ class SummariesViewSet(viewsets.GenericViewSet):
         stat_income = list(stat_income)
         stat_outgo = list(stat_outgo)
         
-        income_data = init_timeset(time_type, stat_income)
-        outgo_data = init_timeset(time_type, stat_outgo)
+        income_data = linechart_handle(time_type, stat_income)
+        outgo_data = linechart_handle(time_type, stat_outgo)
         result = {
             "income": income_data,
             "outgo": outgo_data
@@ -216,13 +225,13 @@ class SummariesViewSet(viewsets.GenericViewSet):
         ## response:
         ``` json
         {
-            "income_data": [
+            "income": [
                 {
                     "category": "类别",
                     "amount": "金额"
                 }
             ],
-            "outgo_data": [
+            "outgo": [
                 {
                     "category": "类别",
                     "amount": "金额"
@@ -232,10 +241,20 @@ class SummariesViewSet(viewsets.GenericViewSet):
         """
         queryset = self.get_queryset()
 
-        category_stat = queryset.values('category').annotate(
+        income_stat = queryset.filter(bill_type=1).values('category').annotate(
             amount_sum=Sum('amount')).order_by()
-        print(category_stat.query)
-        print(category_stat)
+        outgo_stat = queryset.filter(bill_type=0).values('category').annotate(
+            amount_sum=Sum('amount')).order_by()
+        print(income_stat.query)
+        print(outgo_stat.query)
+        income_stat = list(income_stat)
+        outgo_stat = list(outgo_stat)
+        print(income_stat)
+        print(outgo_stat)
 
+        result = {
+            'income': incomeSer,
+            'outgo': outgoSer
+        }
         # todo
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK, data=result)
