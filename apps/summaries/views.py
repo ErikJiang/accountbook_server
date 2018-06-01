@@ -9,10 +9,11 @@ from apps.summaries.serializers import SummariesSerializer
 from apps.categorys.serializers import CategorySerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
+from apps.categorys.models import Categorys
 from string import Template
 from datetime import datetime
 
-
+# 折线数据处理
 def linechart_handle(time_type, time_stat):
 
     time_list = [item['time'] for item in time_stat]
@@ -41,15 +42,26 @@ def linechart_handle(time_type, time_stat):
 
     return init_data
 
-def ringchart_handle(user, data):
+# 环状数据处理
+def ringchart_handle(stat_data):
     
-    # todo
     # 根据data获取到类别ID列表
+    id_list = [item['category'] for item in stat_data]
     # 使用 user 查出对应的类别映射对象
-    # 将 data 中类别ID替换成类别名称
+    category_list = Categorys.objects.filter(id__in=id_list).values('id', 'name')
+    category_list = list(category_list)
     # 计算类别金额总和
-    # 对 data 每一项计算百分比
-    return []
+    stat_sum = sum(item['amount_sum'] for item in stat_data)
+    for stat_item in stat_data:
+        # 替换类别名称
+        for category_item in category_list:
+            if stat_item['category'] == category_item['id']:
+                stat_item['category'] = category_item['name']
+        rate = stat_item['amount_sum'] / stat_sum
+        # 百分比：四舍五入小数点两位
+        stat_item['rate'] = float("{0:.2f}".format(round(rate,2)))
+    
+    return stat_data
 
 
 class CustomAutoSchema(AutoSchema):
@@ -123,8 +135,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
 
         result = query.values('bill_type').annotate(
             amount_sum=Sum('amount')).order_by()
-        print(result.query)
-        print(result)
 
         try:
             income_amount = result.get(bill_type=1)['amount_sum']
@@ -193,10 +203,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
                 'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
 
-        # print(stat_income.query)
-        # print(stat_income)
-        # print(stat_outgo.query)
-        # print(stat_outgo)
         stat_income = list(stat_income)
         stat_outgo = list(stat_outgo)
         
@@ -245,16 +251,17 @@ class SummariesViewSet(viewsets.GenericViewSet):
             amount_sum=Sum('amount')).order_by()
         outgo_stat = queryset.filter(bill_type=0).values('category').annotate(
             amount_sum=Sum('amount')).order_by()
-        print(income_stat.query)
-        print(outgo_stat.query)
+
         income_stat = list(income_stat)
         outgo_stat = list(outgo_stat)
-        print(income_stat)
-        print(outgo_stat)
+
+        if income_stat:
+            ringchart_handle(income_stat)
+        if outgo_stat:
+            ringchart_handle(outgo_stat)
 
         result = {
-            'income': incomeSer,
-            'outgo': outgoSer
+            'income': income_stat,
+            'outgo': outgo_stat
         }
-        # todo
         return Response(status=status.HTTP_200_OK, data=result)
