@@ -1,9 +1,12 @@
 [[source]]
+
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
+
 django = "==2.0.5"
 mysqlclient = "==1.3.12"
 djangorestframework = "==3.8.2"
@@ -14,9 +17,14 @@ django-enumfields = "*"
 django-filter = "==1.1.0"
 coreapi = "*"
 coreschema = "*"
+django-cors-headers = "*"
+
 
 [dev-packages]
+
 yapf = "*"
 
+
 [requires]
+
 python_version = "3.6"

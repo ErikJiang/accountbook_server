@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'rest_framework_swagger',
     'django_filters',
+    'corsheaders',
     'api',
     'apps.users',
     'apps.bills',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -60,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'accountbook.urls'
 
@@ -89,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'accountbook',
         'USER': 'test',
-        'PASSWORD': '123456789',
+        'PASSWORD': 'jiangink',
         'HOST': '127.0.0.1'
     }
 }
@@ -139,9 +143,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    )
+    'DEFAULT_PERMISSION_CLASSES':
+    ('rest_framework.permissions.IsAuthenticated', )
 }
 
 SWAGGER_SETTINGS = {
