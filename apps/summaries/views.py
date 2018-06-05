@@ -6,13 +6,15 @@ from coreapi import Field, Link, document
 from django.db.models import Sum
 import coreschema
 from apps.summaries.serializers import SummariesSerializer
+from apps.categorys.serializers import CategorySerializer
 from apps.bills.serializers import BillSerializer
 from apps.bills.models import Bills
+from apps.categorys.models import Categorys
 from string import Template
 from datetime import datetime
 
-
-def init_timeset(time_type, time_stat):
+# 折线数据处理
+def linechart_handle(time_type, time_stat):
 
     time_list = [item['time'] for item in time_stat]
     if not time_list:
@@ -39,7 +41,28 @@ def init_timeset(time_type, time_stat):
                 init_item['total_amount'] = stat_item['total_amount']
 
     return init_data
+
+# 环状数据处理
+def ringchart_handle(stat_data):
     
+    # 根据data获取到类别ID列表
+    id_list = [item['category'] for item in stat_data]
+    # 使用 user 查出对应的类别映射对象
+    category_list = Categorys.objects.filter(id__in=id_list).values('id', 'name')
+    category_list = list(category_list)
+    # 计算类别金额总和
+    stat_sum = sum(item['amount_sum'] for item in stat_data)
+    for stat_item in stat_data:
+        # 替换类别名称
+        for category_item in category_list:
+            if stat_item['category'] == category_item['id']:
+                stat_item['category'] = category_item['name']
+        rate = stat_item['amount_sum'] / stat_sum
+        # 百分比：四舍五入小数点两位
+        stat_item['rate'] = float("{0:.2f}".format(round(rate,2)))
+    
+    return stat_data
+
 
 class CustomAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
@@ -112,8 +135,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
 
         result = query.values('bill_type').annotate(
             amount_sum=Sum('amount')).order_by()
-        print(result.query)
-        print(result)
 
         try:
             income_amount = result.get(bill_type=1)['amount_sum']
@@ -149,16 +170,16 @@ class SummariesViewSet(viewsets.GenericViewSet):
         ## response:
         ``` json
         {
-            "income_data": [
+            "income": [
                 {
-                    "date": "YYYY-MM or YYYY-MM-DD",
-                    "amount": "金额"
+                    "time": "YYYY-MM or YYYY-MM-DD",
+                    "total_amount": "金额"
                 }
             ],
-            "outgo_data": [
+            "outgo": [
                 {
-                    "date": "YYYY-MM or YYYY-MM-DD",
-                    "amount": "金额"
+                    "time": "YYYY-MM or YYYY-MM-DD",
+                    "total_amount": "金额"
                 }
             ]
         }
@@ -167,7 +188,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
         queryset = self.get_queryset()
 
         if time_type == 'YEAR':
-            # todo bill_type(income or outgo)
             stat_income = queryset.filter(bill_type=1).extra({
                 'time': "DATE_FORMAT(record_date,'%%Y-%%m')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
@@ -176,7 +196,6 @@ class SummariesViewSet(viewsets.GenericViewSet):
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
 
         if time_type == 'MONTH':
-            # todo bill_type(income or outgo)
             stat_income = queryset.filter(bill_type=1).extra({
                 'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
@@ -184,15 +203,11 @@ class SummariesViewSet(viewsets.GenericViewSet):
                 'time': "DATE_FORMAT(record_date,'%%Y-%%m-%%d')"
             }).values('time').annotate(total_amount=Sum('amount')).order_by()
 
-        # print(stat_income.query)
-        # print(stat_income)
-        # print(stat_outgo.query)
-        # print(stat_outgo)
         stat_income = list(stat_income)
         stat_outgo = list(stat_outgo)
         
-        income_data = init_timeset(time_type, stat_income)
-        outgo_data = init_timeset(time_type, stat_outgo)
+        income_data = linechart_handle(time_type, stat_income)
+        outgo_data = linechart_handle(time_type, stat_outgo)
         result = {
             "income": income_data,
             "outgo": outgo_data
@@ -216,13 +231,13 @@ class SummariesViewSet(viewsets.GenericViewSet):
         ## response:
         ``` json
         {
-            "income_data": [
+            "income": [
                 {
                     "category": "类别",
                     "amount": "金额"
                 }
             ],
-            "outgo_data": [
+            "outgo": [
                 {
                     "category": "类别",
                     "amount": "金额"
@@ -232,10 +247,21 @@ class SummariesViewSet(viewsets.GenericViewSet):
         """
         queryset = self.get_queryset()
 
-        category_stat = queryset.values('category').annotate(
+        income_stat = queryset.filter(bill_type=1).values('category').annotate(
             amount_sum=Sum('amount')).order_by()
-        print(category_stat.query)
-        print(category_stat)
+        outgo_stat = queryset.filter(bill_type=0).values('category').annotate(
+            amount_sum=Sum('amount')).order_by()
 
-        # todo
-        return Response(status=status.HTTP_200_OK)
+        income_stat = list(income_stat)
+        outgo_stat = list(outgo_stat)
+
+        if income_stat:
+            ringchart_handle(income_stat)
+        if outgo_stat:
+            ringchart_handle(outgo_stat)
+
+        result = {
+            'income': income_stat,
+            'outgo': outgo_stat
+        }
+        return Response(status=status.HTTP_200_OK, data=result)
