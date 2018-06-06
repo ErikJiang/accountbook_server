@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b80387a035419a829eb4b28e3f1b69808eb563f2923b0b0f822afa768827eaa0"
+            "sha256": "1fbb3fa6d7d7953e9fb1795780b6f1c7ab1789e04aa8240e154ed1fb17f11c4d"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -81,6 +81,10 @@
             "hashes": [],
             "version": "==3.8.2"
         },
+        "djangorestframework-csv": {
+            "hashes": [],
+            "version": "==2.1.0"
+        },
         "enum34": {
             "hashes": [],
             "version": "==1.1.6"
@@ -136,6 +140,10 @@
         "six": {
             "hashes": [],
             "version": "==1.11.0"
+        },
+        "unicodecsv": {
+            "hashes": [],
+            "version": "==0.14.1"
         },
         "uritemplate": {
             "hashes": [],

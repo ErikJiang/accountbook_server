@@ -143,17 +143,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-<<<<<<< HEAD
-    'DEFAULT_PERMISSION_CLASSES':
-    ('rest_framework.permissions.IsAuthenticated', )
-=======
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework_csv.renderers.CSVRenderer',
     ),
->>>>>>> 923329632c52703406c4a829d555605c3f7da698
 }
 
 SWAGGER_SETTINGS = {
