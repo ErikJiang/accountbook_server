@@ -1,0 +1,17 @@
+asgiref
+Django==3.2.25
+pytz==2020.5
+uWSGI
+django-heroku
+gunicorn
+django-import-export
+django-crispy-forms~=1.14.0
+django-filter~=21.1
+pytz==2020.5
+sqlparse==0.4.4
+pymysql==1.1.1
+django-redis
+markdown
+cloudinary~=1.32.0
+djangorestframework
+whitenoise
